@@ -34,6 +34,8 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
+          isAdmin: user.isAdmin,
+          status: user.status,
         };
       }
     })
@@ -49,12 +51,16 @@ export const authOptions: NextAuthOptions = {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
+        token.isAdmin = user.isAdmin;
+        token.status = user.status;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (token) {
         session.user.id = token.id as string;
+        session.user.isAdmin = token.isAdmin as boolean;
+        session.user.status = token.status as string;
       }
       return session;
     },
@@ -65,6 +71,8 @@ export const authOptions: NextAuthOptions = {
 declare module "next-auth" {
   interface User {
     id: string;
+    isAdmin: boolean;
+    status: string;
   }
   
   interface Session {
@@ -72,6 +80,8 @@ declare module "next-auth" {
       id: string;
       name: string;
       email: string;
+      isAdmin: boolean;
+      status: string;
     }
   }
 }

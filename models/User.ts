@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export type UserStatus = 'active' | 'suspended';
+
 export interface IUser {
   name: string;
   email: string;
   password: string;
+  status: UserStatus;
+  isAdmin: boolean;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -27,6 +31,15 @@ const UserSchema = new mongoose.Schema<IUser>(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: [6, 'Password must be at least 6 characters'],
+    },
+    status: {
+      type: String,
+      enum: ['active', 'suspended'],
+      default: 'active',
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
     resetPasswordToken: {
       type: String,
